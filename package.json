@@ -1,0 +1,28 @@
+{
+  "fitbit": {
+    "appUUID": "3b2fd814-85f9-45dc-bdd9-50ba31ae6acb",
+    "appType": "app",
+    "appDisplayName": "sensorship",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "#607d8b",
+    "requestedPermissions": [
+      "access_heart_rate",
+      "access_activity"
+    ],
+    "buildTargets": [
+      "higgs",
+      "meson",
+      "gemini",
+      "mira"
+    ],
+    "i18n": {
+      "en": {
+        "name": "sensorship"
+      }
+    },
+    "defaultLanguage": "en-US"
+  },
+  "devDependencies": {
+    "@fitbit/sdk": "~4.1.0"
+  }
+}

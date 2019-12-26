@@ -1,0 +1,14 @@
+<svg>
+  <defs>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="import" href="/mnt/sysassets/widgets_common.gui" />
+    <link rel="import" href="/mnt/sysassets/widgets/push_button_widget.gui" />
+  </defs>
+  <rect width="100%" height="20" x="0" y="0" />
+  <text id="app-label" class="app-name">Sensorship</text>
+  <use id="toggle-button" href="#push-button" y="50" height="60"
+    fill="fb-red" font-family="System-Regular" font-size="20">
+    <set href="#text" attributeName="text-buffer" to="Stop!" />
+    <set href="#text" attributeName="y" to="12" />
+  </use>
+</svg>
