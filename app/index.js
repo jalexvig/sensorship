@@ -5,6 +5,8 @@ import { Gyroscope } from "gyroscope";
 import { HeartRateSensor } from "heart-rate";
 import { OrientationSensor } from "orientation";
 
+import * as fs from "fs";
+
 const sensors = [];
 
 function log_data(type, timestamp, data) {
@@ -12,6 +14,16 @@ function log_data(type, timestamp, data) {
   console.log(timestamp);
   console.log(data);
 }
+
+function rec_date(sensor_name) {
+  let thisDate = new Date();
+
+  let recFilename = sensor_name+`_${thisDate.getFullYear()}${("0" + (thisDate.getMonth() + 1)).slice(-2)}${("0" + (thisDate.getDate() + 1)).slice(-2)}${("0" + (thisDate.getHours() +1)).slice(-2)}${("0" + (thisDate.getMinutes() +1)).slice(-2)}.txt`;
+  console.log(recFilename)
+  return recFilename
+//  console.log("File name   ",recFilename);
+}
+rec_date("accel")
 
 if (Accelerometer) {
   const accel = new Accelerometer({ frequency: 10, batch: 100 });
@@ -71,7 +83,9 @@ togglebutton.onactivate = function(evt) {
   let sensor;
   if (started) {
     togglebutton.text = "Start";
-    for (sensor of sensors) { sensor.stop(); }
+    for (sensor of sensors) { 
+
+      sensor.stop(); }
     started = false;
   } else {
     togglebutton.text = "Stop!";
