@@ -1,12 +1,29 @@
+import * as fs from "fs";
+
 import { Accelerometer } from "accelerometer";
 import { Gyroscope } from "gyroscope";
 import { HeartRateSensor } from "heart-rate";
 import { OrientationSensor } from "orientation";
 
 function log_data(type, timestamp, data) {
-  console.log(type);
-  console.log(timestamp);
-  console.log(data);
+  
+  let obj = {
+    "type": type,
+    "timestamp": timestamp,
+    "data": data
+  }
+  
+  fs.writeFileSync(getFilename(type), obj, "cbor")
+}
+
+function getFilename(sensor_name) {
+  let thisDate = new Date();
+
+  let recFilename = sensor_name+`_${thisDate.getFullYear()}${("0" + (thisDate.getMonth() + 1)).slice(-2)}${("0" + (thisDate.getDate() + 1)).slice(-2)}${("0" + (thisDate.getHours() +1)).slice(-2)}${("0" + (thisDate.getMinutes() +1)).slice(-2)}.cbor`;
+  
+  console.log(recFilename)
+  
+  return recFilename
 }
 
 export function CustomSensorAPI() {
@@ -43,14 +60,13 @@ CustomSensorAPI.prototype.setupAccelerometer = function() {
   if (Accelerometer) {
     const accel = new Accelerometer({ frequency: 10, batch: 100 });
     accel.addEventListener("reading", () => {
-      for (let index = 0; index < accel.readings.timestamp.length; index++) {
-        const data = [accel.readings.x[index], accel.readings.y[index], accel.readings.z[index]];
-
-        log_data("accelerometer", timestamp=accel.readings.timestamp[index], data)      
-      }
+      const data = [accel.readings.x, accel.readings.y, accel.readings.z];
+      log_data("accelerometer", timestamp=accel.readings.timestamp, data)      
     });
     this.sensors.push(accel);
     accel.start();
+  } else {
+    console.log("Accelerometer not found.");
   }
 }
 
@@ -58,14 +74,13 @@ CustomSensorAPI.prototype.setupGyroscope = function() {
   if (Gyroscope) {
     const gyro = new Gyroscope({ frequency: 10, batch: 100 });
     gyro.addEventListener("reading", () => {
-      for (let index = 0; index < gyro.readings.timestamp.length; index++) {
-        const data = [gyro.readings.x[index], gyro.readings.y[index], gyro.readings.z[index]];
-
-        log_data("gyroscope", timestamp=gyro.readings.timestamp[index], data)      
-      }
+      const data = [gyro.readings.x, gyro.readings.y, gyro.readings.z];
+      log_data("gyroscope", timestamp=gyro.readings.timestamp, data)      
     });
     this.sensors.push(gyro);
     gyro.start();
+  } else {
+    console.log("Gyroscope not found.");
   }
 }
 
@@ -73,27 +88,26 @@ CustomSensorAPI.prototype.setupHeartRateSensor = function() {
   if (HeartRateSensor) {
     const hrm = new HeartRateSensor({ frequency: 2, batch: 10 });
     hrm.addEventListener("reading", () => {
-      for (let index = 0; index < hrm.readings.timestamp.length; index++) {
-        log_data("heart rate", hrm.readings.timestamp[index], [hrm.readings.heartRate[index]])      
-      }
+      log_data("heartrate", hrm.readings.timestamp, [hrm.readings.heartRate])      
     });
     this.sensors.push(hrm);
     hrm.start();
+  } else {
+    console.log("Heart Rate Monitor not found.");
   }
 }
 
 
 CustomSensorAPI.prototype.setupOrientation = function() {
   if (OrientationSensor) {
-    const orientation = new OrientationSensor({ frequency: 60 });
+    const orientation = new OrientationSensor({ frequency: 60, batch: 100 });
     orientation.addEventListener("reading", () => {
-      for (let index = 0; index < orientation.readings.timestamp.length; index++) {
-        const data = [orientation.readings.x[index], orientation.readings.y[index], orientation.readings.z[index], orientation.readings.scalar[index]];
-
-        log_data("oreintation", timestamp=orientation.readings.timestamp[index], data)      
-      }
+      const data = [orientation.readings.x, orientation.readings.y, orientation.readings.z, orientation.readings.scalar];
+      log_data("orientation", timestamps=orientation.readings.timestamp, data)      
     });
     this.sensors.push(orientation);
     orientation.start();
+  } else {
+    console.log("Orientation not found.");
   }
 }

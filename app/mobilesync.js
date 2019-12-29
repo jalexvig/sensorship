@@ -2,14 +2,6 @@ import * as fs from "fs";
 
 import { outbox } from "file-transfer";
 
-// temporary emulation of data
-let json_data = {
-  "tag": "blah",
-  "latitude": -2.932463,
-  "longitude": 151.797305
-};
-fs.writeFileSync("data.cbor", json_data, "cbor");
-
 
 const appDataDpath = "/private/data/";
 
@@ -25,6 +17,8 @@ CustomSyncAPI.prototype.syncFiles = function() {
 }
 
 CustomSyncAPI.prototype.syncFile = function(fpath) {
+  console.log(`Queueing $(fpath) from fitbit to mobile device.`);
+  
   outbox
   .enqueueFile(fpath)
   .then((ft) => {
