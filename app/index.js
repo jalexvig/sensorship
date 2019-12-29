@@ -1,83 +1,22 @@
 import document from "document";
 
-import { Accelerometer } from "accelerometer";
-import { Gyroscope } from "gyroscope";
-import { HeartRateSensor } from "heart-rate";
-import { OrientationSensor } from "orientation";
+import { CustomSensorAPI } from "./sensors.js"
+import { CustomSyncAPI } from "./mobilesync.js"
 
-const sensors = [];
 
-function log_data(type, timestamp, data) {
-  console.log(type);
-  console.log(timestamp);
-  console.log(data);
-}
-
-if (Accelerometer) {
-  const accel = new Accelerometer({ frequency: 10, batch: 100 });
-  accel.addEventListener("reading", () => {
-    for (let index = 0; index < accel.readings.timestamp.length; index++) {
-      const data = [accel.readings.x[index], accel.readings.y[index], accel.readings.z[index]];
-      
-      log_data("accelerometer", timestamp=accel.readings.timestamp[index], data)      
-    }
-  });
-  sensors.push(accel);
-  accel.start();
-}
-
-if (Gyroscope) {
-  const gyro = new Gyroscope({ frequency: 10, batch: 100 });
-  gyro.addEventListener("reading", () => {
-    for (let index = 0; index < gyro.readings.timestamp.length; index++) {
-      const data = [gyro.readings.x[index], gyro.readings.y[index], gyro.readings.z[index]];
-      
-      log_data("gyroscope", timestamp=gyro.readings.timestamp[index], data)      
-    }
-  });
-  sensors.push(gyro);
-  gyro.start();
-}
-
-if (HeartRateSensor) {
-  const hrm = new HeartRateSensor({ frequency: 2, batch: 10 });
-  hrm.addEventListener("reading", () => {
-    for (let index = 0; index < hrm.readings.timestamp.length; index++) {
-      log_data("heart rate", hrm.readings.timestamp[index], [hrm.readings.heartRate[index]])      
-    }
-  });
-  sensors.push(hrm);
-  hrm.start();
-}
-
-if (OrientationSensor) {
-  const orientation = new OrientationSensor({ frequency: 60 });
-  orientation.addEventListener("reading", () => {
-    for (let index = 0; index < orientation.readings.timestamp.length; index++) {
-      const data = [orientation.readings.x[index], orientation.readings.y[index], orientation.readings.z[index], orientation.readings.scalar[index]];
-      
-      log_data("oreintation", timestamp=orientation.readings.timestamp[index], data)      
-    }
-  });
-  sensors.push(orientation);
-  orientation.start();
-}
+// SENSORS
+let customSensorAPI = new CustomSensorAPI(togglebutton);
 
 const togglebutton = document.getElementById("toggle-button");
-
-let started = true;
-
+  
 togglebutton.onactivate = function(evt) {
-  let sensor;
-  if (started) {
-    togglebutton.text = "Start";
-    for (sensor of sensors) { sensor.stop(); }
-    started = false;
-  } else {
+  if (customSensorAPI.toggleSensors()) {
     togglebutton.text = "Stop!";
-    for (sensor of sensors) {
-      sensor.start();
-    }
-    started = true;
+  } else {
+    togglebutton.text = "Start";
   }
 }
+
+// SYNCING
+let customSyncAPI = new CustomSyncAPI();
+customSyncAPI.syncFiles();
